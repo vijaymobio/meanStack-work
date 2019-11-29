@@ -23,6 +23,7 @@
     "express": "^4.16.3",
     "mongodb": "^3.3.4",
     "mongoose": "^5.1.6",
-    "mongoutil": "^1.0.1"
+    "mongoutil": "^1.0.1",
+    "promise": "^8.0.3"
   }
 }

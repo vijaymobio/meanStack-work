@@ -5,8 +5,10 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
 app.use(bodyParser.json()); // support json encoded bodies
 require('dotenv').config();
+
 var userRoute = require('./app/router/route');
 var connection = require('./app/config/db');
+
 console.log('Token- > ',process.env.TOKEN);
 app.use('/', userRoute);
 

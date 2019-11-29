@@ -2,16 +2,19 @@ const Users = require('../model/schema/Users');
 var query =  require('../Repository/BaseRepo')
 const baseQuery = require('../Repository/baseRepoClass');
 const getQuery = new baseQuery;
+import baseInterface from '../Repository/BaseInterface';
+class userData extends baseInterface {
+    bs = new baseInterface();
+    constructor(){
 
-require('dotenv').config();
-module.exports = {
-   
+    }
  /**
   * Find all Users 
   * @author Vijay Prajapati
   */
 
-  async all(req, res){    
+ async all(req, res){    
+     this.bs.ge
     // const data = await getQuery.findUsers();
      const data = await getQuery.findUsers();
     data2 = {
@@ -20,7 +23,7 @@ module.exports = {
       'message': "success"
     };
     res.status(200).send(data2);
-  },
+  }
 
  
  /**
@@ -44,7 +47,7 @@ module.exports = {
     } else {
       res.status(200).send("Record not Fond");
     }
-  },
+  }
 
  /**
   * Create new user
@@ -59,16 +62,13 @@ module.exports = {
       "message" : "User Add sucessfully"
     }
     res.status(200).send(response);
-  },
-  destroy: function(req, res){
-    Users.deleteOne({"_id":req.params.id});
-    res.send('Todo ' + req.params.id + ' delete')
-  },
-  edit: function(req, res){
+  }
+
+  edit(req, res){
     res.send('Todo ' + req.params.id + ' updated')
     // res.send(process.env.SECRET_KEY);
-  },
-  notFoundApi: function(req, res){
+  }
+  notFoundApi(req, res){
     data = {
       'status':404,
       'error': "404 Rest API Not Found"
@@ -76,4 +76,8 @@ module.exports = {
     res.status(404).send(data);
     // res.send(process.env.SECRET_KEY);
   }
-};
+  destroy(req, res){
+    Users.deleteOne({"_id":req.params.id});
+    res.send('Todo ' + req.params.id + ' delete')
+  }
+}

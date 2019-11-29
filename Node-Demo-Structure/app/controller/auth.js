@@ -11,14 +11,19 @@ module.exports = {
   },
     login: function(req, res){   
         console.log(' email   - > ',req.body);
-    Users.find({"email":req.body.email,'password':req.body.password},(err, users) => {
+    Users.find({"email":req.body.email,'password':req.body.password},{"_id":1,"firstName":1,'lastName':1,'email':1},(err, users) => {
       if (err)
           console.log(err);
       else
       if(users.length < 1){
-        res.send("user name pass word in currect");  
+        res.status(401).send("user name pass word in currect");  
       }else{
-        res.send(users);
+        data = {
+          'status':200,
+          'UserDetails' : users,
+          'message': "Login sucessfully"
+         };
+        res.status(200).json(data);
       }
         
     });
