@@ -1,5 +1,5 @@
 const Users = require('../model/schema/Users');
-var query =  require('../Repository/BaseRepo')
+// var query =  require('../Repository/BaseRepo')
 const baseQuery = require('../Repository/baseRepoClass');
 const getQuery = new baseQuery;
 

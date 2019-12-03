@@ -39,7 +39,6 @@ module.exports = {
      */
     async createNewUser(req) {
         let data = await Users.create({"firstName":req.body.firstName,"lastName":req.body.lastName,"email":req.body.email,"password":req.body.password});
-        console.log('data check -> ',data);
         return  data;                        
     },
 }
