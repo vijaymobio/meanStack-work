@@ -1,8 +1,13 @@
 const Users = require('../model/schema/Users');
-var query =  require('../Repository/BaseRepo')
+// var query =  require('../Repository/BaseRepo')
+const connection =  require('../config/db')
 const baseQuery = require('../Repository/baseRepoClass');
 const getQuery = new baseQuery;
 const mongoose =  require('mongoose')
+const Mailer = require('../helpers/mailer');
+const mail = new Mailer;
+
+
 class userDataclass {
 
     constructor(){}
@@ -15,25 +20,62 @@ class userDataclass {
      * @author Vijay Prajapati
      * 
      */
-    async dynamicAll(req, res){   
-      const data = await getQuery.dynamicFind(Users,{'firstName':1,'lastName':1,'email':1});
-      if(data.err){
-        return res.status(200).send("Somthing wrong");
-      }
-      if(data.length > 0)  
-      {
-       const  userDetails = {
-        'status':200,
-        'data' : data,
-        'length':data.length,
-        'message': "all User finds"
-        };
-        res.status(200).send(userDetails);
-      } else {
-        res.status(200).send('User Not Found');
-      }
+
+     findData(req,res){
+      // getQuery.dynamicFind(Users,{'firstName':1,'lastName':1,'email':1}) = (e) =>console.log(e);
+      //  getQuery.dynamicFind(Users,{'firstName':1,'lastName':1,'email':1}).map((res)=>{
+      //   console.log(res);
+      //  })
+      
+      getQuery.dynamicFind(Users,{'firstName':1,'lastName':1,'email':1}).then(response=>{
+        return res.send(response);
+      }).catch(err => {
+        console.log(err)
+      })
     }
 
+    /** 
+     *  Find all User  
+     * @param {*} req 
+     * @param {*} res 
+     */
+    dynamicAll(req, res){ 
+    // mail.sendMail();
+    try{
+      getQuery.dynamicFind(Users,{'firstName':1,'lastName':1,'email':1,'password':1}).then(data=>{           
+        
+        if(data.err){
+          return res.status(500).send("Internal server Error");
+        }
+        if(data.length > 0)  
+        {
+         const  userDetails = {
+          'status':200,
+          'length':data.length,
+          'message': "all User finds",
+          'data' : data,
+          };
+          res.status(200).send(userDetails);
+        } else {
+          const  userDetails = {
+            'status':200,
+            'message': "Users are Empty",
+            
+            };
+          res.status(200).send(userDetails);
+        }
+      }).catch(err=>{
+        console.log(err);
+        
+      })
+    } catch(e) {
+      const err = {
+        'status':500,
+        'message':'Internal Server Error'
+      }
+      res.status(500).send(err);
+    }
+  }
 
     /**
      * 
@@ -43,97 +85,227 @@ class userDataclass {
      * @author Vijay Prajapati
      * 
      */
-    async dynamicFindByField(req, res){ 
-      const data = await getQuery.dynamicFindByField(Users,{'firstName':1,'lastName':1,'email':1},{"_id":req.params.id}); 
-      if(data.err){
-        res.status(200).send("Somthing wrong");
-      }
-      if(data.length > 0)  
-      {
-       const  userDetails = {
-        'status':200,
-        'data' : data,
-        'length':data.length,
-        'message': "User find"
-        };
-        res.status(200).send(userDetails);
-      } else {
-        res.status(200).send('User Not Found');
-      }
-    }
-
-
-    async dynamicDeleteById(req, res){
-      let data;
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)){
-          return res.status(200).send('Invalid ID.');
+    dynamicFindByField(req, res){
+      getQuery.dynamicFindByField(Users,{'firstName':1,'lastName':1,'email':1},{"_id":req.params.id}).then(data=>{
+        if(data.err){
+         return res.status(200).send({'status':200,'message':"Somthing wrong"});
         }
-      data = await getQuery.dynamicDeleteById(Users,{"_id":req.params.id });
-      if(data.deletedCount ===1 ){
-        res.status(200).send('Delete successfuly');
-      } else if(data.err){
-        res.status(200).send('error');
-      } else{ 
-        res.status(200).send('User Not Found');
-      }
-    }
-
-    async deleteMultipleRecord(req , res){
-      const values = [
-        '5de65b01ae9ed234e07e052f',
-        '5de65b56ce23fb352eeec979'
-      ]
-      //  Postman json 
-      //  {
-      //    "id":[
-      //      "5de65b01ae9ed234e07e052d",
-      //      "5de65b01ae9ed234e07e052c",
-      //      "5de65b00ae9ed234e07e052b",
-      //      "5de65b00ae9ed234e07e052a"]
-      //  }
-       
-      const data = await getQuery.multipleDelete(Users,req.body.id);
-      console.log('data- > ', data);
-      if(data.deletedCount > 0 ){
-        const  userDetails = {
+        if(data.length > 0)  
+        {
+         const  userDetails = {
           'status':200,
-          'numberOfDelete': data.deletedCount,
-          'message': "Sucessfully record deleted"
+          'length':data.length,
+          'message': "Find user success",
+          'data' : data
           };
-          res.status(200).send(userDetails);
-      } else if(data.err){
-        res.status(200).send('error');
-      } else{ 
-        res.status(200).send('User Not Found');
-      }
-    }
-
-    async  updateRecord(req , res){
-      const values = { 
-        firstName : 'pratik',
-        lastName : 'Prajapati',
-        email :'vijay@gmail.com'
-      } 
-
-      const data = await getQuery.updateUserDetails(Users,values,req.params.id);
-
-      if(data.nModified > 0 ){
+          return res.status(200).send(userDetails);
+        } else {
           const  userDetails = {
             'status':200,
-            'message': "Sucessfully record Updated"
-          };
-          res.status(200).send(userDetails);
-          return;
-      } 
-      
-      if(data.err){
-        res.status(200).send('error');
-        return;
-      }
-      return res.status(200).send('no update any');
+            'message': "User Not found",
+            
+            };
+           return res.status(200).send(userDetails);
+        }
+        // res.status(500).send(err);
+      }).catch(err=>{
+        const error = {
+          'status':500,
+          'message':'Internal Server Error - '+ err.message,
+        }
+        return res.status(500).send(error)
+      }); 
     }
-  
+
+    /**
+     * Delete user using ID
+     * @param {*} req 
+     * @param {*} res 
+     * @author Vijay Prajapati
+     */
+    dynamicDeleteById(req, res){
+      let data;
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)){
+          const data = {
+            'status':200,
+            'Message':'Invalid Id'
+          }
+          return res.status(200).send(data);
+        }
+      getQuery.dynamicDeleteById(Users,{"_id":req.params.id }).then(data=>{
+        if(data.deletedCount ===1 ){
+          const data = {
+            'status':200,
+            'Message':'Delete successfuly'
+          }
+           res.status(200).send(data);
+        } else if(data.err){
+          const data = {
+            'status':200,
+            'Message':data.err.message
+          }
+           res.status(200).send(data);
+        } else{ 
+          const data = {
+            'status':200,
+            'Message':'User Not Found'
+          }
+          res.status(200).send(data);
+        }
+        // res.status(500).send(err);
+      }).catch(err=>{
+        const errDetails = {
+              'status':500,
+              'message':'Internal Server Error - '+ err.message,
+            }
+          res.status(500).send(errDetails);
+      });
+    }
+  /**
+   * Multiple record deleted
+   * @param {*} req 
+   * @param {*} res 
+   * @author Vijay Prajapati
+   */
+    deleteMultipleRecord(req , res){
+        //  Postman json  , Send data from frondend like below
+        //  {
+        //    "id":[
+        //      "5de65b01ae9ed234e07e052d",
+        //      "5de65b01ae9ed234e07e052c",
+        //      "5de65b00ae9ed234e07e052b",
+        //      "5de65b00ae9ed234e07e052a"]
+        //  }
+         
+        getQuery.multipleDelete(Users,req.body.id).then(data=>{
+          if(data.deletedCount > 0 ){
+            const  userDetails = {
+              'status':200,
+              'numberOfDelete': data.deletedCount,
+              'message': "Sucessfully record deleted"
+              };
+              res.status(200).send(userDetails);
+          } else if(data.err){
+            res.status(200).send('error');
+          } else{ 
+            res.status(200).send({'status':200,'message' :' User Not Found'});
+          }
+          res.status(500).send(err)
+        }).catch(err=>{
+          const errDetails = {
+                'status':500,
+                'message':'Internal Server Error - '+ err.message,
+              }
+            res.status(500).send(errDetails);
+        });;
+    }
+
+  /**
+   * Update record using ID
+   * @param {*} req 
+   * @param {*} res 
+   * @author Vijay Prajapati
+   */
+    updateRecord(req , res){
+
+    // Postman send data like this.
+    //   { 
+    //     "firstName" : "Pratik",
+    //     "lastName" : "Prajapati",
+    //     "email" :"viju@gmail.com"
+    // }
+
+    const values = { 
+        firstName : req.body.firstName,
+        lastName : req.body.lastName,
+        email :req.body.email
+      };
     
+    getQuery.updateUserDetails(Users,values,req.params.id).then(data=>{
+      if(data.status === 409) {
+        let response =  {
+          "status":409,
+          "message" : 'This email is already registered'
+        }
+        return res.status(409).send(response);  
+      }
+      if(data.status === 400) {
+        let response =  {
+          "status":409,
+          "message" : 'please enter valid email Id'
+        }
+        return res.status(400).send(response);  
+      }
+      
+      if(data.nModified > 0  && data.n > 0 && data.ok > 0){
+        const  userDetails = {
+          'status':200,
+          'message': "Sucessfully record Updated"
+        };
+        res.status(200).send(userDetails);
+        return;
+    }else {
+      res.status(200).send({'status':200,'message ':'Not Updated record Please change at least one field'});
+    }
+    // if(data.err){
+    //   res.status(200).send('error');
+    //   return;
+    // }
+    }).catch(err=>{
+      const arrDetails = {
+            'status':500,
+            'message':'Internal Server Error - '+ err.message,
+          }
+         return res.status(500).send(arrDetails)
+    });   
+  }
+
+  
+  /**
+   * New Create User 
+   * @param {*} req 
+   * @param {*} res 
+   * @author Vijay Prajapati
+   */
+  dynamicCreateNewUser(req, res){
+      getQuery.dynamicCreateNewUser(Users,req).then(data=>{
+        if(data.status === 409) {
+          let response =  {
+            "status":409,
+            "message" : 'This email is already registered'
+          }
+          return res.status(409).send(response);  
+        }
+        if(data.status === 400) {
+          let response =  {
+            "status":409,
+            "message" : 'please enter valid email Id'
+          }
+          return res.status(400).send(response);  
+        }
+        if(data.status === 422) {
+          let response =  {
+            "status":422,
+            "message" : 'Please enter Strong password',
+            'required':'minmum 8 length, One Digit,One Special charactor,One Capital and small'
+          }
+          return res.status(422).send(response);  
+        }
+        
+        let response =  {
+          "status":200,
+          "data":data,
+          "message" : "User Add sucessfully"
+        }
+        res.status(200).send(response);
+      }).catch(err=>{
+        const error = {
+          'status':500,
+          'message':'Internal Server Error - '+ err.message,
+        }
+        res.status(500).send(error)
+    });
+  }
 
  /**
   * Find all Users 
@@ -145,7 +317,6 @@ class userDataclass {
     const data2 = {
       'status':200,
       'users' : data,
-      'length':data.length,
       'message': "success",
     };
     res.status(200).send(data2);

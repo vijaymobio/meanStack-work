@@ -13,5 +13,5 @@ console.log('Token- > ',process.env.TOKEN);
 app.use('/', userRoute);
 
 app.listen(port,() => {
-    console.log("http://localhost:"+port+"/users"); 
+    console.log("http://localhost:"+port); 
 }); 
