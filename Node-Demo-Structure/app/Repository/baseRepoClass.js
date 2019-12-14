@@ -3,7 +3,10 @@ const validation = require("../Helpers/validation");
 const validate = new validation();
 const Cryptr = require("../Helpers/CryptrPassword");
 const cryptr = new Cryptr();
-const { requireAuth ,strategy, jwt ,passport,jwtOptions} = require('../Http/middleware/jwtToken')
+const {
+  jwt,
+  jwtOptions
+} = require("../Http/middleware/jwtToken");
 class BaseQuery {
   constructor() {}
 
@@ -183,14 +186,13 @@ class BaseQuery {
         const decPass = cryptr.decrypt(data[0].password);
         console.log(decPass);
         if (decPass === auth.password) {
-
-          // Set token and send user 
+          // Set token and send user
           let payload = { id: data[0].id };
           let token = jwt.sign(payload, jwtOptions.secretOrKey);
-          
+
           const response = {
             status: 200,
-            token:'Bearer '+token,
+            token: "Bearer " + token,
             Message:
               data[0].firstName +
               " " +

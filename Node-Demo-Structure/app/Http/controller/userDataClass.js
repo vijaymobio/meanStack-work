@@ -43,7 +43,6 @@ class UserDataclass {
    * @param {*} res
    */
   dynamicAll(req, res) {
-    try {
       getQuery
         .dynamicFind(Users, {
           firstName: 1,
@@ -52,15 +51,12 @@ class UserDataclass {
           password: 1
         })
         .then(data => {
-          if (data.err) {
-            return res.status(500).send("Internal server Error");
-          }
           if (data.length > 0) {
             const userDetails = {
               status: 200,
-              length: data.length,
               message: "all User finds",
-              data: data
+              data: data,
+              length:data.length
             };
             res.status(200).send(userDetails);
           } else {
@@ -72,15 +68,12 @@ class UserDataclass {
           }
         })
         .catch(err => {
-          console.log(err);
+          const error = {
+            status: 500,
+            message: "Internal Server Error"
+          };
+          res.status(500).send(error);
         });
-    } catch (e) {
-      const err = {
-        status: 500,
-        message: "Internal Server Error"
-      };
-      res.status(500).send(err);
-    }
   }
 
   /**
@@ -149,6 +142,10 @@ class UserDataclass {
     getQuery
       .dynamicDeleteById(Users, { _id: req.params.id })
       .then(data => {
+
+        
+        console.log('data-> ',data);
+                
         if (data.deletedCount === 1) {
           const data = {
             status: 200,
