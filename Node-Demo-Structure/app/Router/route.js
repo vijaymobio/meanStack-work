@@ -25,7 +25,7 @@ app.get("/protected", requireAuth, function(req, res) {
 
 // Users routes
 app.get("", userDataclass.all);
-app.get("/dynamic", userDataclass.dynamicAll);
+app.get("/dynamic", requireAuth,userDataclass.dynamicAll);
 app.get(
   "/dynamic/:id",
   passport.authenticate("jwt", { session: false }),
@@ -33,6 +33,8 @@ app.get(
 );
 // app.get('/dynamic/:id', userDataclass.dynamicFindByField)
 app.delete("/dynamic/delete/:id", requireAuth,function(req, res) {
+  console.log('yes called');
+  
   userDataclass.dynamicDeleteById(req, res);
 });
 app.post("/user/create",requireAuth, function(req, res) {

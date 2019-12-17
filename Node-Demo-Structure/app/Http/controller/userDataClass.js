@@ -336,16 +336,16 @@ class UserDataclass {
    * @author Vijay Prajapati
    */
 
-  async all(req, res) {
-    // const data = await getQuery.findUsers();
-    const data = await getQuery.findUsers();
-    const data2 = {
-      status: 200,
-      users: data,
-      message: "success"
-    };
-    res.status(200).send(data2);
-  }
+  // async all(req, res) {
+  //   // const data = await getQuery.findUsers();
+  //   const data = await getQuery.findUsers();
+  //   const data2 = {
+  //     status: 200,
+  //     users: data,
+  //     message: "success"
+  //   };
+  //   res.status(200).send(data2);
+  // }
 
   /**
    *
@@ -354,23 +354,23 @@ class UserDataclass {
    *
    */
 
-  async viewOne(req, res) {
-    const data = await getQuery.findUsersId(req.params.id);
-    if (data.err) {
-      res.status(200).send("Somthing wrong");
-    }
-    if (data.length > 0) {
-      const userDetails = {
-        status: 200,
-        data: data,
-        length: data.length,
-        message: "User find"
-      };
-      res.status(200).send(userDetails);
-    } else {
-      res.status(200).send("Record not Fond");
-    }
-  }
+  // async viewOne(req, res) {
+  //   const data = await getQuery.findUsersId(req.params.id);
+  //   if (data.err) {
+  //     res.status(200).send("Somthing wrong");
+  //   }
+  //   if (data.length > 0) {
+  //     const userDetails = {
+  //       status: 200,
+  //       data: data,
+  //       length: data.length,
+  //       message: "User find"
+  //     };
+  //     res.status(200).send(userDetails);
+  //   } else {
+  //     res.status(200).send("Record not Fond");
+  //   }
+  // }
 
   /**
    * Create new user

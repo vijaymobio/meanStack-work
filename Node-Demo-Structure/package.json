@@ -7,8 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha — timeout 10000 test/supertest.js ",
-    "dev": "babel-watch server.js"
+    "test": "mocha — timeout 10000 Test/supertest.js",
+    "dev": "babel-watch server.js",
+    "coverage": "istanbul cover Test/Router/route.js"
   },
   "keywords": [],
   "author": "",
