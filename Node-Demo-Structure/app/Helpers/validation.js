@@ -38,5 +38,12 @@ class Validation {
   validatePassword(pass) {
     return password.validate(pass);
   }
+
+  nameValidate(fname,lname){
+    var regName = /^[a-zA-Z]+$/;
+    const validFirstName = regName.test(fname) ;
+    const validLastName = regName.test(lname);
+    return {'FisrtName':validFirstName , 'LastName':validLastName}
+  }
 }
 module.exports = Validation;

@@ -135,9 +135,13 @@ class BaseQuery {
   async dynamicCreateNewUser(tableName, req) {
     const validEmail = validate.validateEmail(req.body.email);
     const validPasss = validate.validatePassword(req.body.password);
+    const validName = validate.nameValidate(req.body.firstName,req.body.lastName);
+
+    
+    // const validLastName =validate.validLastName(req.body.lastName);
     const encrypt = cryptr.encrypt(req.body.password);
     req.body.password = encrypt;
-    if (validEmail) {
+    if (validEmail && validName.FisrtName && validName.LastName) {
       const getUser = await this.dynamicFindByField(
         tableName,
         { firstName: 1, lastName: 1, email: 1 },
@@ -155,10 +159,10 @@ class BaseQuery {
         });
         return data;
       } else {
-        return { status: 422, "message ": "Please Enter Strong password" };
+        return { status: 406, "message ": "Please Enter Strong password" };
       }
     } else {
-      return { status: 400, "message ": "Please Enter valid email ID" };
+      return { status: 400, "message ": "Please Enter Valid fields" };
     }
   }
 
@@ -184,7 +188,6 @@ class BaseQuery {
       );
       if (data.length > 0) {
         const decPass = cryptr.decrypt(data[0].password);
-        console.log(decPass);
         if (decPass === auth.password) {
           // Set token and send user
           let payload = { id: data[0].id };

@@ -25,10 +25,10 @@ app.get("/protected", requireAuth, function(req, res) {
 
 // Users routes
 app.get("", userDataclass.all);
-app.get("/dynamic", userDataclass.dynamicAll);
+app.get("/dynamic",requireAuth, userDataclass.dynamicAll);
 app.get(
   "/dynamic/:id",
-  passport.authenticate("jwt", { session: false }),
+  requireAuth,
   userDataclass.dynamicFindByField
 );
 // app.get('/dynamic/:id', userDataclass.dynamicFindByField)

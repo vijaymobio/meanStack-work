@@ -249,7 +249,7 @@ class UserDataclass {
         }
         if (data.status === 400) {
           let response = {
-            status: 409,
+            status: 400,
             message: "please enter valid email Id"
           };
           return res.status(400).send(response);
@@ -301,19 +301,19 @@ class UserDataclass {
         }
         if (data.status === 400) {
           let response = {
-            status: 409,
-            message: "please enter valid email Id"
+            status: 400,
+            message: "Bad request - Please fill right field"
           };
           return res.status(400).send(response);
         }
-        if (data.status === 422) {
+        if (data.status === 406) {
           let response = {
-            status: 422,
+            status: 406,
             message: "Please enter Strong password",
             required:
               "minmum 8 length, One Digit,One Special charactor,One Capital and small"
           };
-          return res.status(422).send(response);
+          return res.status(406).send(response);
         }
         let response = {
           status: 200,

@@ -32,9 +32,9 @@ const Users = require("../../Model/schema/Users");
 
 // lets create our strategy for web token
 let strategy = new JwtStrategy(jwtOptions, async function(jwt_payload, next) {
-  console.log("payload received", jwt_payload);
+  // console.log("payload received", jwt_payload);
   let user = await getUser({ id: jwt_payload.id });
-  console.log("user - >", user);
+  // console.log("user - >", user);
 
   if (user) {
     next(null, user);
